@@ -44,9 +44,9 @@ class TrainingConfig:
     """Hyper-parameters with sensible defaults. Can be overridden via CLI."""
 
     def __init__(self):
-        self.data_csv_path = "/home/zry00006639/AIGC/消融实验/AQIQA-3k.data.csv/data.csv"  # 鏁版嵁鏍囨敞 CSV
-        self.image_base_dir = "/home/zry00006639/AIGC/消融实验/ACGIQA-3K"  # 鍥惧儚鏍圭洰褰?
-        self.clip_model_name = "/home/zry00006639/share/zry/AIGC/AIGC/clip-vit-large-patch14"
+        self.data_csv_path = ""  # path to the training CSV
+        self.image_base_dir = ""  # root directory that stores the images
+        self.clip_model_name = "openai/clip-vit-large-patch14"
 
         # training
         self.epochs = 20
@@ -86,18 +86,17 @@ class TrainingConfig:
         self.refinement_dim = 256  # hidden dimension for refinement module
         self.strict_residual = False  # use strict residual learning (supervise residual directly)
 
-        # ===== 绾畫宸涔犵瓥鐣?=====
-        self.use_residual_learning = True  # 鍚敤娈嬪樊瀛︿範锛屽敖閲忎繚鎸?CLIP 瀵归綈绌洪棿
-        self.residual_scale_q = 0.2  # 璐ㄩ噺娈嬪樊缂╂斁绯绘暟
-        self.residual_scale_c = 0.2  # 涓€鑷存€ф畫宸缉鏀剧郴鏁?
-        self.partial_freeze = False  # 閮ㄥ垎鍐荤粨 CLIP锛屼粎璁粌鍚庡嚑灞?
-        self.freeze_layers = 8  # 鍐荤粨鍓?N 灞傦紙ViT-L 鍏?24 灞傦級
-
+        # ===== residual learning =====
+        self.use_residual_learning = True  # keep CLIP as the prior and predict residual corrections
+        self.residual_scale_q = 0.2  # scaling factor for the quality residual
+        self.residual_scale_c = 0.2  # scaling factor for the alignment residual
+        self.partial_freeze = False  # finetune only later CLIP layers when enabled
+        self.freeze_layers = 8  # freeze the first N ViT layers (ViT-L has 24 layers)
         # ===== RACL (Rank-Augmented Consistency Learning) =====
-        self.use_rank_loss = False  # 鍚敤鎺掑簭鎹熷け
-        self.rank_alpha = 10.0  # 鎺掑簭 logits 鏂滅巼
-        self.rank_pairs = 64  # 姣忎釜 batch 閲囨牱 pair 鏁?
-        self.rank_lambda = 0.5  # 鎺掑簭鎹熷け鏉冮噸锛堢浉瀵?MSE锛?
+        self.use_rank_loss = False  # enable pairwise ranking loss
+        self.rank_alpha = 10.0  # slope for ranking logits
+        self.rank_pairs = 64  # sampled pair count per batch
+        self.rank_lambda = 0.5  # ranking loss weight relative to MSE
 
         # ===== heteroscedastic regression (use std columns) =====
         self.use_hetero_weight = True
@@ -3159,15 +3158,15 @@ def main():
     parser.add_argument('--no_strict_residual', action='store_true',
                         help='Disable strict residual learning (default: enabled)')
 
-    # ===== 娈嬪樊瀛︿範涓庨儴鍒嗗喕缁撳弬鏁?=====
+    # ===== residual learning =====
     parser.add_argument('--no_residual_learning', action='store_true',
-                        help='绂佺敤娈嬪樊瀛︿範锛堥粯璁ゅ惎鐢級')
+                        help='Disable residual learning (enabled by default)')
     parser.add_argument('--residual_scale_q', type=float,
                         help='Quality residual scale (default: 0.2)')
     parser.add_argument('--residual_scale_c', type=float,
                         help='Consistency residual scale (default: 0.2)')
     parser.add_argument('--partial_freeze', action='store_true',
-                        help='鍚敤 CLIP 閮ㄥ垎鍐荤粨锛堜粎璁粌鍚庡嚑灞傦級')
+                        help='Enable partial CLIP freezing (finetune later layers only)')
     parser.add_argument('--freeze_layers', type=int,
                         help='Freeze first N transformer layers (default: 8)')
     parser.add_argument('--no_pcrc', action='store_true',
@@ -3187,7 +3186,7 @@ def main():
     parser.add_argument('--pcrc_anchor_texts', type=str,
                         help='Comma-separated custom anchor prompts')
 
-    # ===== RACL 鍙傛暟 =====
+    # ===== RACL =====
     parser.add_argument('--use_rank_loss', action='store_true',
                         help='Enable ranking loss for direct correlation optimization')
     parser.add_argument('--rank_alpha', type=float,
@@ -3295,7 +3294,7 @@ def main():
     if args.refinement_dim: cfg.refinement_dim = args.refinement_dim
     if args.no_strict_residual: cfg.strict_residual = False
 
-    # 娈嬪樊瀛︿範涓庨儴鍒嗗喕缁撳弬鏁?
+    # residual learning config
     if args.no_residual_learning: cfg.use_residual_learning = False
     if args.residual_scale_q is not None: cfg.residual_scale_q = args.residual_scale_q
     if args.residual_scale_c is not None: cfg.residual_scale_c = args.residual_scale_c
@@ -3313,8 +3312,7 @@ def main():
     if args.pcrc_anchor_texts: cfg.pcrc_anchor_texts = args.pcrc_anchor_texts
     if args.use_rank_loss: cfg.use_rank_loss = True
 
-    # RACL 鍙傛暟
-    if args.use_rank_loss: cfg.use_rank_loss = True
+    # RACL config
     if args.rank_alpha is not None: cfg.rank_alpha = args.rank_alpha
     if args.rank_pairs is not None: cfg.rank_pairs = args.rank_pairs
     if args.rank_lambda is not None: cfg.rank_lambda = args.rank_lambda
@@ -3518,7 +3516,6 @@ def main():
         s_q, p_q, s_c, p_c = evaluate(model, val_dl, cfg, proc, print_examples=print_examples, num_examples=5)
 
         if cfg.use_rank_loss:
-            # 鏄剧ず鎺掑簭鎹熷け
             if cfg.use_explanations:
                 print(
                     f"Ep{ep + 1} TrainLoss={train_loss:.4f}(Q{lq:.4f},C{lc:.4f},E{le:.4f},RankQ{lrq:.4f},RankC{lrc:.4f})  Val SROCC_Q={s_q:.4f},SROCC_C={s_c:.4f}")
@@ -3535,7 +3532,7 @@ def main():
 
         if s_c > best_sc:
             best_sc = s_c
-            # 鏍规嵁閰嶇疆鐢熸垚淇濆瓨鏂囦欢鍚?
+            # Save the current best checkpoint according to validation alignment SROCC.
             if cfg.use_rank_loss:
                 save_name = f"baseline_racl_lambda{cfg.rank_lambda}_best.pt"
             elif cfg.use_residual_learning:
