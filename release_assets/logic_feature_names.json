@@ -1,0 +1,14 @@
+[
+  "subject_match",
+  "present_ratio",
+  "missing_ratio",
+  "off_topic_ratio",
+  "attribute_match_rate",
+  "scene_match_rate",
+  "style_match_rate",
+  "relation_match_rate",
+  "count_match_rate",
+  "confidence",
+  "uncertainty_ratio",
+  "contradiction_flag"
+]
