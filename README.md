@@ -2,7 +2,6 @@
 
 This repository directly accompanies the manuscript "Neuro-Symbolic Residual Calibration for Fine-Grained Text-to-Image Alignment Assessment" currently submitted to *The Visual Computer*. If you use the code, split definition, cached logic-feature interface, or reproduction assets, please cite the corresponding manuscript and the DOI-bearing archive listed below.
 
-Before resubmission, replace all placeholder links in this README with your real permanent public links and DOI-bearing records.
 
 ## Permanent Links
 
