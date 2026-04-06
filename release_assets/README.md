@@ -1,22 +1,24 @@
 # Release Assets
 
-这个目录保存与论文可复现性直接相关、且适合公开发布的轻量资产。
+This directory contains lightweight public assets that are directly relevant to reproducing the manuscript results and can be redistributed safely.
 
-当前包含：
+## Included Files
 
 - `agiqa3k_split_seed42.json`
-  - 主稿 AGIQA-3K 固定划分文件。
-  - 用于主线单次重跑或对齐 `split_seed=42` 的实验协议。
-
+  Fixed AGIQA-3K split file used by the main rerun reported in the manuscript.
 - `logic_feature_names.json`
-  - 12 维 logic interface 的固定顺序。
-  - 与 `vectorize_direct_alignment_features.py` 和 `src/funnel.py` 保持一致。
-
+  Canonical order of the 12-dimensional logic interface consumed by the online scorer.
 - `logic_cache_schema.md`
-  - Stage A audit 输出与 12 维压缩向量的字段说明。
-  - 说明哪些字段是 requirement-level cache，哪些字段直接进入在线残差校准。
+  Field-level description of the Stage A cache and the compressed 12-dimensional logic vector.
 
-注意：
+## Intended Use
 
-- 仓库不分发 AGIQA-3K 和 AIGCIQA2023 原始图像与标注。
-- 与 benchmark 再分发条款相关的派生预测文件和缓存，不在这个公开 release 中直接打包；如有需要，可按论文中的声明联系作者获取。
+These files support:
+
+- fixed-split reruns on AGIQA-3K
+- verification that the released 12-dimensional interface matches the manuscript definition
+- inspection of the cache fields used between Stage A auditing and online residual scoring
+
+## Redistribution Note
+
+This repository does not redistribute the original AGIQA-3K or AIGCIQA2023 images and annotations. Derived artifacts that depend on benchmark redistribution restrictions should be archived separately or shared according to the manuscript's data-availability statement.

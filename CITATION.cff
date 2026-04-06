@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+message: >-
+  This repository directly accompanies the manuscript "Neuro-Symbolic Residual
+  Calibration for Fine-Grained Text-to-Image Alignment Assessment" submitted to
+  The Visual Computer. If you use the code, split definition, cached
+  logic-feature interface, or release assets, please cite the manuscript and the
+  DOI-bearing archive.
+title: Neuro-Symbolic Residual Calibration
+type: software
+authors:
+  - family-names: Qian
+    given-names: Siyuan
+repository-code: https://github.com/qiyan111/Prompt-Conditioned-Residual-Calibration
+license: MIT
+abstract: >-
+  Code and reproducibility assets for neuro-symbolic residual calibration
+  with a fixed 12-dimensional logic interface for fine-grained text-to-image
+  alignment assessment.
+keywords:
+  - text-to-image alignment assessment
+  - AI-generated image evaluation
+  - residual calibration
+  - CLIP
+  - neuro-symbolic interface
+preferred-citation:
+  type: article
+  authors:
+    - family-names: Qian
+      given-names: Siyuan
+  title: Neuro-Symbolic Residual Calibration for Fine-Grained Text-to-Image Alignment Assessment
+  journal: The Visual Computer
+  year: 2026

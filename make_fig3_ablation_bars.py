@@ -1,3 +1,5 @@
+import argparse
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -32,7 +34,15 @@ def annotate_bars(ax, bars):
         )
 
 
+def parse_args():
+    parser = argparse.ArgumentParser("make_fig3_ablation_bars")
+    parser.add_argument("--output_pdf", default="Fig3_ablation_bars.pdf")
+    parser.add_argument("--output_png", default="Fig3_ablation_bars.png")
+    return parser.parse_args()
+
+
 def main():
+    args = parse_args()
     plt.style.use("default")
     fig, axes = plt.subplots(1, 2, figsize=(13.8, 4.8))
     x = np.arange(len(LABELS))
@@ -79,8 +89,8 @@ def main():
         ax.tick_params(axis="y", labelsize=12)
 
     fig.tight_layout(w_pad=2.0)
-    fig.savefig("Fig3_ablation_bars.pdf", bbox_inches="tight")
-    fig.savefig("Fig3_ablation_bars.png", dpi=240, bbox_inches="tight")
+    fig.savefig(args.output_pdf, bbox_inches="tight")
+    fig.savefig(args.output_png, dpi=240, bbox_inches="tight")
 
 
 if __name__ == "__main__":

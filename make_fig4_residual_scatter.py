@@ -1,3 +1,4 @@
+import argparse
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -6,13 +7,21 @@ import pandas as pd
 from scipy.stats import pearsonr, spearmanr
 
 
-CSV_PATH = Path(r"D:\Download\val_preds (2).csv")
-OUTPUT_PDF = Path("Fig4_residual_scatter.pdf")
-OUTPUT_PNG = Path("Fig4_residual_scatter.png")
+def parse_args():
+    parser = argparse.ArgumentParser("make_fig4_residual_scatter")
+    parser.add_argument("--csv_path", required=True, help="Path to the exported validation-prediction CSV")
+    parser.add_argument("--output_pdf", default="Fig4_residual_scatter.pdf")
+    parser.add_argument("--output_png", default="Fig4_residual_scatter.png")
+    return parser.parse_args()
 
 
 def main():
-    df = pd.read_csv(CSV_PATH)
+    args = parse_args()
+    csv_path = Path(args.csv_path)
+    output_pdf = Path(args.output_pdf)
+    output_png = Path(args.output_png)
+
+    df = pd.read_csv(csv_path)
     target = df["target_c"].astype(float).to_numpy()
     coarse = df["pred_c_coarse"].astype(float).to_numpy()
     final = df["pred_c"].astype(float).to_numpy()
@@ -61,8 +70,8 @@ def main():
     ax.tick_params(labelsize=11)
 
     fig.tight_layout()
-    fig.savefig(OUTPUT_PDF, bbox_inches="tight")
-    fig.savefig(OUTPUT_PNG, dpi=240, bbox_inches="tight")
+    fig.savefig(output_pdf, bbox_inches="tight")
+    fig.savefig(output_png, dpi=240, bbox_inches="tight")
 
     print(f"coarse_srocc={coarse_srocc:.6f}")
     print(f"coarse_plcc={coarse_plcc:.6f}")
