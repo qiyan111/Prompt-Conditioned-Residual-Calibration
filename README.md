@@ -326,14 +326,3 @@ Zenodo archive placeholder:
   doi    = {<CODE_DOI>}
 }
 ```
-
-## Notes for Resubmission
-
-To satisfy the editorial reproducibility request before resubmission, verify that all of the following are public and permanent:
-
-- the GitHub repository is public
-- the Zenodo archive is public and DOI-bearing
-- the README contains the final permanent links
-- the manuscript abstract, data-availability statement, and code-availability statement use the same final links
-- the repository continues to state that it directly accompanies the manuscript submitted to *The Visual Computer*
-- the README explicitly asks users to cite the manuscript and the DOI-bearing archive
