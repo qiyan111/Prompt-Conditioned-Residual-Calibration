@@ -35,9 +35,9 @@ def annotate_bars(ax, bars):
 
 
 def parse_args():
-    parser = argparse.ArgumentParser("make_fig3_ablation_bars")
-    parser.add_argument("--output_pdf", default="Fig3_ablation_bars.pdf")
-    parser.add_argument("--output_png", default="Fig3_ablation_bars.png")
+    parser = argparse.ArgumentParser("make_fig6_aigciqa_bars")
+    parser.add_argument("--output_pdf", default="Fig6_aigciqa_bars.pdf")
+    parser.add_argument("--output_png", default="Fig6_aigciqa_bars.png")
     return parser.parse_args()
 
 

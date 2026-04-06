@@ -2,13 +2,12 @@
 
 This repository directly accompanies the manuscript "Neuro-Symbolic Residual Calibration for Fine-Grained Text-to-Image Alignment Assessment" currently submitted to *The Visual Computer*. If you use the code, split definition, cached logic-feature interface, or reproduction assets, please cite the corresponding manuscript and the DOI-bearing archive listed below.
 
-
 ## Permanent Links
 
 - Current GitHub repository URL: `https://github.com/qiyan111/Prompt-Conditioned-Residual-Calibration`
-- Zenodo archive: `https://doi.org/<ZENODO_DOI>`
-- Code DOI: `https://doi.org/<CODE_DOI>`
-- Data and release-assets DOI: `https://doi.org/<DATA_DOI>`
+- Zenodo archive: to be linked here immediately after public archival deposition
+- Code DOI: to be inserted here after Zenodo archival deposition
+- Data and release-assets DOI: to be inserted here after Zenodo archival deposition
 - Manuscript status: submitted to *The Visual Computer*
 
 ## What Is Included
@@ -33,10 +32,10 @@ The repository includes:
 - `prepare_aigciqa2023_extension.py`: builds the local AIGCIQA2023 extension CSV and split JSON
 - `run_external_fair_baselines.py`: reruns external baselines under a matched local protocol
 - `run_local_vlm_judge.py`: direct VLM-judge baseline script
-- `make_fig3_ablation_bars.py`: figure-generation script for the AIGCIQA2023 ablation bars
-- `make_fig4_residual_scatter.py`: figure-generation script for the AGIQA-3K residual-scatter plot
+- `make_fig6_aigciqa_bars.py`: figure-generation script for the AIGCIQA2023 ablation bars (Fig. 6)
+- `make_fig3_residual_scatter.py`: figure-generation script for the AGIQA-3K residual-scatter plot (Fig. 3)
 - `src/funnel.py`: fixed logic-feature names and cache-field definitions used by the online scorer
-- `release_assets/`: public split definition and logic-interface schema required for reproduction
+- `release_assets/`: public split definitions, pre-computed logic caches, and logic-interface schema required for reproduction
 - `requirements.txt`: pip dependency list
 - `environment.yml`: conda environment file for reproducible setup
 - `CITATION.cff`: citation metadata for the repository and manuscript linkage
@@ -87,10 +86,13 @@ This repository does not redistribute the original `AGIQA-3K` or `AIGCIQA2023` i
 Public release assets that can be redistributed are provided under `release_assets/`:
 
 - `agiqa3k_split_seed42.json`: fixed AGIQA-3K split used by the main rerun
+- `aigciqa2023_extension_split.json`: fixed AIGCIQA2023 extension split (1920 train / 480 test)
+- `agiqa3k_logic12_cache.jsonl`: pre-computed 12-dimensional logic vector cache for AGIQA-3K
+- `aigciqa2023_logic12_cache.jsonl`: pre-computed 12-dimensional logic vector cache for AIGCIQA2023
 - `logic_feature_names.json`: fixed order of the 12-dimensional logic interface
 - `logic_cache_schema.md`: field descriptions for the Stage A cache and compressed logic vector
 
-Additional derived artifacts that depend on redistribution restrictions of the underlying benchmarks should be archived through Zenodo or provided by the corresponding author according to the manuscript statements.
+The pre-computed logic caches allow readers to skip Stage A (which requires a VLM endpoint) and proceed directly to training and evaluation. Additional derived artifacts that depend on redistribution restrictions of the underlying benchmarks should be archived through Zenodo or provided by the corresponding author according to the manuscript statements.
 
 ## Expected Directory Layout
 
@@ -144,21 +146,23 @@ python vectorize_direct_alignment_features.py \
 
 ### 3. Run the main controlled ablations
 
+The manuscript reports results from a single fixed seed. To reproduce using the pre-computed logic cache (skipping Stage A):
+
 ```bash
 python run_model_ablations.py \
   --data_csv_path data/AGIQA-3K/agiqa.csv \
   --image_base_dir data/AGIQA-3K/images \
   --clip_model_name openai/clip-vit-large-patch14 \
-  --funnel_cache_jsonl outputs/agiqa/alignment_logic_12d.jsonl \
+  --funnel_cache_jsonl release_assets/agiqa3k_logic12_cache.jsonl \
   --output_root runs/agiqa_mainline \
   --split_seed 42 \
-  --train_seeds 11,22,33
+  --train_seeds 42
 ```
 
-Important reported defaults:
+Important reported defaults (matching the manuscript results):
 
+- seed: `42`
 - split seed: `42`
-- train seeds: `11,22,33`
 - epochs: `15`
 - batch size: `16`
 - learning rate: `2e-4`
@@ -176,11 +180,11 @@ python train.py \
   --lr 2e-4 \
   --w_q 0.3 \
   --w_c 0.7 \
-  --seed 11 \
+  --seed 42 \
   --split_file release_assets/agiqa3k_split_seed42.json \
   --output_dir runs/agiqa_single \
-  --run_name full_model_seed11 \
-  --funnel_cache_jsonl outputs/agiqa/alignment_logic_12d.jsonl
+  --run_name full_model_seed42 \
+  --funnel_cache_jsonl release_assets/agiqa3k_logic12_cache.jsonl
 ```
 
 ## Reproduction on the AIGCIQA2023 Extension Split
@@ -232,11 +236,11 @@ python train.py \
   --lr 2e-4 \
   --w_q 0.3 \
   --w_c 0.7 \
-  --seed 11 \
-  --split_file outputs/aigciqa2023/aigciqa2023_extension_split.json \
+  --seed 42 \
+  --split_file release_assets/aigciqa2023_extension_split.json \
   --output_dir runs/aigciqa2023_single \
-  --run_name full_model_seed11 \
-  --funnel_cache_jsonl outputs/aigciqa2023/alignment_logic_12d.jsonl
+  --run_name full_model_seed42 \
+  --funnel_cache_jsonl release_assets/aigciqa2023_logic12_cache.jsonl
 ```
 
 ## External Baselines Under the Matched Local Protocol
@@ -251,7 +255,7 @@ python run_external_fair_baselines.py \
   --variants ipce,clip_agiqa,ma_agiqa \
   --external_repo_root _repo_inspect \
   --split_seed 42 \
-  --train_seeds 11,22,33
+  --train_seeds 42
 ```
 
 ## Direct Local VLM Judge
@@ -270,21 +274,21 @@ python run_local_vlm_judge.py \
 
 ## Figure Generation
 
-Generate the AIGCIQA2023 ablation bar chart:
+Generate the AGIQA-3K residual scatter plot (Fig. 3) from an exported validation-prediction CSV:
 
 ```bash
-python make_fig3_ablation_bars.py \
-  --output_pdf Fig3_ablation_bars.pdf \
-  --output_png Fig3_ablation_bars.png
+python make_fig3_residual_scatter.py \
+  --csv_path /path/to/val_preds.csv \
+  --output_pdf Fig3_residual_scatter.pdf \
+  --output_png Fig3_residual_scatter.png
 ```
 
-Generate the AGIQA-3K residual scatter plot from an exported validation-prediction CSV:
+Generate the AIGCIQA2023 ablation bar chart (Fig. 6):
 
 ```bash
-python make_fig4_residual_scatter.py \
-  --csv_path /path/to/val_preds.csv \
-  --output_pdf Fig4_residual_scatter.pdf \
-  --output_png Fig4_residual_scatter.png
+python make_fig6_aigciqa_bars.py \
+  --output_pdf Fig6_aigciqa_bars.pdf \
+  --output_png Fig6_aigciqa_bars.png
 ```
 
 ## Expected Outputs
@@ -303,7 +307,7 @@ These files are the recommended candidates for Zenodo archiving together with th
 
 ## Citation and Manuscript Linkage
 
-This repository directly accompanies the manuscript below and should be cited together with the DOI-bearing software archive:
+This repository directly accompanies the manuscript below and should be cited together with the DOI-bearing software archive once that archival record is public:
 
 ```bibtex
 @article{qian2026nsrc,
@@ -315,13 +319,13 @@ This repository directly accompanies the manuscript below and should be cited to
 }
 ```
 
-Zenodo archive placeholder:
+Zenodo archive record template to finalize after deposition:
 
 ```bibtex
 @software{qian2026pcrc,
   author = {Qian, Siyuan},
-  title  = {Prompt-Conditioned Residual Calibration: Code and Reproduction Assets},
+  title  = {Neuro-Symbolic Residual Calibration: Code and Reproduction Assets},
   year   = {2026},
-  doi    = {<CODE_DOI>}
+  doi    = {INSERT_ZENODO_CODE_DOI_HERE}
 }
 ```

@@ -8,10 +8,10 @@ from scipy.stats import pearsonr, spearmanr
 
 
 def parse_args():
-    parser = argparse.ArgumentParser("make_fig4_residual_scatter")
+    parser = argparse.ArgumentParser("make_fig3_residual_scatter")
     parser.add_argument("--csv_path", required=True, help="Path to the exported validation-prediction CSV")
-    parser.add_argument("--output_pdf", default="Fig4_residual_scatter.pdf")
-    parser.add_argument("--output_png", default="Fig4_residual_scatter.png")
+    parser.add_argument("--output_pdf", default="Fig3_residual_scatter.pdf")
+    parser.add_argument("--output_png", default="Fig3_residual_scatter.png")
     return parser.parse_args()
 
 

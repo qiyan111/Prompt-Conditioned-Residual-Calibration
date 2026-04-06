@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
-"""baseline_clip_eval.py
-Minimal AIGC image scorer that relies *only* on CLIP global embeddings.
-No quality gate, no cross-modal transformer, no alignment or distribution losses.
-Useful as a clean baseline to compare against more complex architectures.
-"""
+
 
 import argparse
 import json
