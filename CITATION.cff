@@ -11,6 +11,8 @@ authors:
   - family-names: Qian
     given-names: Siyuan
 repository-code: https://github.com/qiyan111/Prompt-Conditioned-Residual-Calibration
+doi: 10.5281/zenodo.19446773
+version: 1.0.0
 license: MIT
 abstract: >-
   Code and reproducibility assets for neuro-symbolic residual calibration

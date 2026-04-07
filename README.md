@@ -5,9 +5,8 @@ This repository directly accompanies the manuscript "Neuro-Symbolic Residual Cal
 ## Permanent Links
 
 - Current GitHub repository URL: `https://github.com/qiyan111/Prompt-Conditioned-Residual-Calibration`
-- Zenodo archive: to be linked here immediately after public archival deposition
-- Code DOI: to be inserted here after Zenodo archival deposition
-- Data and release-assets DOI: to be inserted here after Zenodo archival deposition
+- Zenodo archive: [`10.5281/zenodo.19446773`](https://doi.org/10.5281/zenodo.19446773)
+- Code DOI: `10.5281/zenodo.19446773`
 - Manuscript status: submitted to *The Visual Computer*
 
 ## What Is Included
@@ -319,13 +318,13 @@ This repository directly accompanies the manuscript below and should be cited to
 }
 ```
 
-Zenodo archive record template to finalize after deposition:
+Zenodo archive record:
 
 ```bibtex
 @software{qian2026pcrc,
   author = {Qian, Siyuan},
   title  = {Neuro-Symbolic Residual Calibration: Code and Reproduction Assets},
   year   = {2026},
-  doi    = {INSERT_ZENODO_CODE_DOI_HERE}
+  doi    = {10.5281/zenodo.19446773}
 }
 ```
